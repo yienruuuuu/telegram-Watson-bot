@@ -1,19 +1,44 @@
 plugins {
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'java'
 }
 
 group = 'io.github.yienruuuuu'
 version = '1.0-SNAPSHOT'
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-async'
+    //telegram
+    implementation 'org.telegram:telegrambots-spring-boot-starter:6.9.7.1'
+    //jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    //mysql
+    implementation 'com.mysql:mysql-connector-j:8.3.0'
+    //swagger
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+    //lombok
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    //cache
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+    //test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
