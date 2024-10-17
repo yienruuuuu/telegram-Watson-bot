@@ -1,20 +1,19 @@
 version: '3.8'
 services:
   mysql:
-    image: mysql:8.0    # 使用 MySQL 8.0 的 Docker 映像
+    image: mysql:8.0
     container_name: dev-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password  # 設置 MySQL 的 root 密碼
-      MYSQL_DATABASE: tg_bot             # 初始化的資料庫名稱
-      MYSQL_USER: root                # 建立新的使用者
-      MYSQL_PASSWORD: password        # 使用者密碼
+      MYSQL_ROOT_PASSWORD: password  # 設置 root 密碼
+      MYSQL_DATABASE: tg_bot          # 初始化的資料庫名稱
     ports:
-      - "3306:3306"                      # 將 MySQL 的埠對映到主機
+      - "3307:3306"                  # 將 MySQL 的埠對映到主機
     volumes:
-      - ./mysql-init-scripts:/initdb.d/  # 自動執行的 SQL 腳本
+      - ./mysql-init-scripts:/docker-entrypoint-initdb.d/  # 自動執行的 SQL 腳本
     networks:
       - dev-network
+    command: ["/bin/bash", "-c", "rm -rf /var/lib/mysql/* && docker-entrypoint.sh mysqld"]
 
 networks:
   dev-network:

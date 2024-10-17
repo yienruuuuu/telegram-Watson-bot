@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.3.4'
+    id 'org.springframework.boot' version '3.1.5'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'java'
 }
@@ -17,9 +17,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-async'
-    //telegram
-    implementation 'org.telegram:telegrambots-spring-boot-starter:6.9.7.1'
+    // telegrambots
+    implementation 'org.telegram:telegrambots-longpolling:7.10.0'
+    implementation 'org.telegram:telegrambots-client:7.10.0'
     //jackson
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     //mysql
