@@ -12,6 +12,7 @@
         </encoder>
     </appender>
 
+<!--    各層級日置檔案輸出-->
     <appender name="file_warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/warn/logback.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

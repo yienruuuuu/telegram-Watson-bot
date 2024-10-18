@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author Eric.Lee Date: 2024/10/16
  */
-@Service("BotService")
+@Service
 public class BotServiceImpl implements BotService {
 
   private final BotRepository botRepository;
