@@ -17,7 +17,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    // telegrambots
+    //lang
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    //telegrambots
     implementation 'org.telegram:telegrambots-longpolling:7.10.0'
     implementation 'org.telegram:telegrambots-client:7.10.0'
     //jackson
@@ -25,7 +27,7 @@ dependencies {
     //mysql
     implementation 'com.mysql:mysql-connector-j:8.3.0'
     //swagger
-    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+    implementation 'io.swagger.core.v3:swagger-core:2.2.15'
     //lombok
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
