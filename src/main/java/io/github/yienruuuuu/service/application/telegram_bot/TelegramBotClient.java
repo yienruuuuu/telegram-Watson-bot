@@ -9,6 +9,8 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPaidMedia;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -29,7 +31,10 @@ public class TelegramBotClient {
         this.telegramClient = createTelegramClient();
     }
 
-    public void sendTextMessage(SendMessage sendMessage) {
+    /**
+     * 傳送文字訊息
+     */
+    public void send(SendMessage sendMessage) {
         try {
             telegramClient.execute(sendMessage);
         } catch (TelegramApiException e) {
@@ -37,7 +42,10 @@ public class TelegramBotClient {
         }
     }
 
-    public void sendPhotoMessage(SendPhoto sendPhoto) {
+    /**
+     * 傳送圖片
+     */
+    public void send(SendPhoto sendPhoto) {
         try {
             telegramClient.execute(sendPhoto);
         } catch (TelegramApiException e) {
@@ -45,11 +53,36 @@ public class TelegramBotClient {
         }
     }
 
-    public void sendPaidMediaMessage(SendPaidMedia paidMedia) {
+    /**
+     * 傳送付費圖片
+     */
+    public void send(SendPaidMedia paidMedia) {
         try {
             telegramClient.execute(paidMedia);
         } catch (TelegramApiException e) {
             log.error("傳送付費圖片訊息異常 ", e);
+        }
+    }
+
+    /**
+     * 編輯訊息的回覆鍵盤
+     */
+    public void send(EditMessageReplyMarkup editMessageReplyMarkup) {
+        try {
+            telegramClient.execute(editMessageReplyMarkup);
+        } catch (TelegramApiException e) {
+            log.error("回收訊息失敗 ", e);
+        }
+    }
+
+    /**
+     * 刪除訊息
+     */
+    public void send(DeleteMessage deleteMessage) {
+        try {
+            telegramClient.execute(deleteMessage);
+        } catch (TelegramApiException e) {
+            log.error("刪除訊息失敗 ", e);
         }
     }
 

@@ -5,15 +5,17 @@ services:
     container_name: dev-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password  # 設置 root 密碼
-      MYSQL_DATABASE: tg_bot          # 初始化的資料庫名稱
+      MYSQL_ROOT_PASSWORD: password        # 設置 root 密碼
+      MYSQL_DATABASE: tg_bot               # 初始化的資料庫名稱
+      MYSQL_CHARSET:  utf8mb4              # 設定資料庫字符集為 utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci  # 設置校對規則為 utf8mb4_unicode_ci
     ports:
       - "3307:3306"                  # 將 MySQL 的埠對映到主機
     volumes:
       - ./mysql-init-scripts:/docker-entrypoint-initdb.d/  # 自動執行的 SQL 腳本
     networks:
       - dev-network
-    command: ["/bin/bash", "-c", "rm -rf /var/lib/mysql/* && docker-entrypoint.sh mysqld"]
+    command: [ "/bin/bash", "-c", "rm -rf /var/lib/mysql/* && docker-entrypoint.sh mysqld" ]
 
 networks:
   dev-network:

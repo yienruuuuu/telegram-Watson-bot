@@ -9,11 +9,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+@SpringBootApplication(scanBasePackages = {"io.github.yienruuuuu.*"})
 @EnableTransactionManagement
 @EnableScheduling
 @EnableCaching
 @EnableAsync
-@SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 
   public static void main(String[] args) {
