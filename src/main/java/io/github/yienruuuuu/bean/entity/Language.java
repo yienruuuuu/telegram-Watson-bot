@@ -1,7 +1,7 @@
 package io.github.yienruuuuu.bean.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.github.yienruuuuu.bean.enums.languageType;
+import io.github.yienruuuuu.bean.enums.LanguageType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -30,7 +30,7 @@ public class Language{
     @Column(name = "language_code", nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
     @Schema(description = "語言代碼")
-    private languageType languageCode;
+    private LanguageType languageCode;
 
     @Size(max = 50)
     @NotNull

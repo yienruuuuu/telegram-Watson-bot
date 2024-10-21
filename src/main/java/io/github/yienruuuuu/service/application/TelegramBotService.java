@@ -23,6 +23,7 @@ public class TelegramBotService {
     private final DivinationTelegramBot divinationTelegramBot;
     private final BotService botService;
 
+
     public TelegramBotService(DivinationTelegramBot divinationTelegramBot, BotService botService) {
         this.divinationTelegramBot = divinationTelegramBot;
         this.botService = botService;

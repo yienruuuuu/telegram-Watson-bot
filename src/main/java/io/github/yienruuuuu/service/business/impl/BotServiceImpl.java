@@ -1,5 +1,6 @@
 package io.github.yienruuuuu.service.business.impl;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import io.github.yienruuuuu.bean.entity.Bot;
 import io.github.yienruuuuu.repository.BotRepository;
 import io.github.yienruuuuu.service.business.BotService;
@@ -14,9 +15,12 @@ import java.util.List;
 public class BotServiceImpl implements BotService {
 
   private final BotRepository botRepository;
+  private final Cache<String, Bot> botCache;
 
-  public BotServiceImpl(BotRepository botRepository) {
+
+  public BotServiceImpl(BotRepository botRepository, Cache<String, Bot> botCache) {
     this.botRepository = botRepository;
+      this.botCache = botCache;
   }
 
   @Override
@@ -26,7 +30,19 @@ public class BotServiceImpl implements BotService {
 
   @Override
   public Bot findBotById(Integer id) {
-    return botRepository.findById(id)
-        .orElse(null);
+    String cacheKey = "bot_" + id;
+
+    // 先檢查緩存是否存在
+    Bot cachedBot = botCache.getIfPresent(cacheKey);
+    if (cachedBot != null) {
+      return cachedBot;
+    }
+
+    // 若不存在則從資料庫查詢，並存入緩存
+    Bot bot = botRepository.findById(id).orElse(null);
+    if (bot != null) {
+      botCache.put(cacheKey, bot);
+    }
+    return bot;
   }
 }
