@@ -19,7 +19,7 @@ public class TelegramBotService {
 
     // TG長輪巡物件
     private TelegramBotsLongPollingApplication botsApplication;
-    // 占卜機器人
+    // 每日運勢機器人
     private final DivinationTelegramBot divinationTelegramBot;
     private final BotService botService;
 

@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "bots", schema = "tg_bot")
+@Table(name = "bot", schema = "tg_bot")
 public class Bot extends BaseEntity {
 
     @Id

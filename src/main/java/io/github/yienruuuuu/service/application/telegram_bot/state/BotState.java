@@ -1,7 +1,7 @@
 package io.github.yienruuuuu.service.application.telegram_bot.state;
 
 import io.github.yienruuuuu.bean.entity.Bot;
-import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import io.github.yienruuuuu.service.application.telegram_bot.DivinationTelegramBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  * Date: 2024/10/21
  */
 public interface BotState {
-    void handleMessage(LongPollingSingleThreadUpdateConsumer bot, Update update, Bot botEntity);
+    void handleMessage(DivinationTelegramBot bot, Update update, Bot botEntity);
 
-    void handleCallbackQuery(LongPollingSingleThreadUpdateConsumer bot, Update update, Bot botEntity);
+    void handleCallbackQuery(DivinationTelegramBot bot, Update update, Bot botEntity);
 }

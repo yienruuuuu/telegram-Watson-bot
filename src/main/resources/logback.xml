@@ -64,7 +64,6 @@
         </encoder>
     </appender>
 
-
     <!-- project log -->
     <logger name="io.github.yienruuuuu" level="debug" additivity="false">
         <appender-ref ref="console" />

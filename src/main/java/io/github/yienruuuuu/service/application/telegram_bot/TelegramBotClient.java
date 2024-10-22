@@ -5,14 +5,18 @@ import io.github.yienruuuuu.service.business.BotService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.client.AbstractTelegramClient;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPaidMedia;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.io.Serializable;
 
 /**
  * @author Eric.Lee
@@ -20,7 +24,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  */
 @Component
 @Slf4j
-public class TelegramBotClient {
+public class TelegramBotClient{
     @Getter
     private final TelegramClient telegramClient;
     private final BotService botService;
@@ -32,61 +36,65 @@ public class TelegramBotClient {
     }
 
     /**
-     * 傳送文字訊息
+     * 通用的 send 方法，支援所有 BotApiMethod 的子類別
      */
-    public void send(SendMessage sendMessage) {
+    public <T extends Serializable, Method extends BotApiMethod<T>> T send(Method method) {
         try {
-            telegramClient.execute(sendMessage);
+            return telegramClient.execute(method);
         } catch (TelegramApiException e) {
-            log.error("傳送訊息失敗 ", e);
+            handleException(e, method.getMethod());
+            return null;
         }
     }
 
     /**
-     * 傳送圖片
+     * 通用的 send 方法，支援所有 BotApiMethod 的子類別
      */
-    public void send(SendPhoto sendPhoto) {
+    public void send(SendAnimation animation) {
         try {
-            telegramClient.execute(sendPhoto);
+            telegramClient.execute(animation);
         } catch (TelegramApiException e) {
-            log.error("傳送圖片訊息失敗 ", e);
+            handleException(e, "傳送GIF");
+        }
+    }
+
+
+    /**
+     * 取得文件的通用方法
+     */
+    public File getFile(GetFile getFile) {
+        try {
+            return telegramClient.execute(getFile);
+        } catch (TelegramApiException e) {
+            handleException(e, "getFile");
+            return null;
         }
     }
 
     /**
-     * 傳送付費圖片
+     * 下載文件的通用方法
      */
-    public void send(SendPaidMedia paidMedia) {
+    public java.io.File downloadFile(File file) {
         try {
-            telegramClient.execute(paidMedia);
+            return telegramClient.downloadFile(file);
         } catch (TelegramApiException e) {
-            log.error("傳送付費圖片訊息異常 ", e);
+            handleException(e, "getFile");
+            return null;
         }
+    }
+
+
+
+    /**
+     * 將錯誤處理統一管理
+     */
+    private void handleException(TelegramApiException e, String action) {
+        log.error("{} 操作失敗: ", action, e);
     }
 
     /**
-     * 編輯訊息的回覆鍵盤
+     * 根據 botToken 創建 TelegramClient
      */
-    public void send(EditMessageReplyMarkup editMessageReplyMarkup) {
-        try {
-            telegramClient.execute(editMessageReplyMarkup);
-        } catch (TelegramApiException e) {
-            log.error("回收訊息失敗 ", e);
-        }
-    }
-
-    /**
-     * 刪除訊息
-     */
-    public void send(DeleteMessage deleteMessage) {
-        try {
-            telegramClient.execute(deleteMessage);
-        } catch (TelegramApiException e) {
-            log.error("刪除訊息失敗 ", e);
-        }
-    }
-
-    // 將創建 TelegramClient 的邏輯抽取到一個方法中
     private TelegramClient createTelegramClient() {
         Bot bot = botService.findBotById(1);
         return new OkHttpTelegramClient(bot.getBotToken());
