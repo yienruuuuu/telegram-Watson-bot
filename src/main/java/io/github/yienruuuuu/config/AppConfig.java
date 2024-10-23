@@ -2,10 +2,15 @@ package io.github.yienruuuuu.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.github.yienruuuuu.bean.enums.BotStateEnum;
-import io.github.yienruuuuu.service.application.telegram_bot.state.BotState;
-import io.github.yienruuuuu.service.application.telegram_bot.state.InitialState;
-import io.github.yienruuuuu.service.application.telegram_bot.state.PickCardState;
+import io.github.yienruuuuu.bean.enums.ChangeFileBotStateEnum;
+import io.github.yienruuuuu.bean.enums.DivinationBotStateEnum;
+import io.github.yienruuuuu.service.application.telegram_bot.change_file_state.ChangeFileBotState;
+import io.github.yienruuuuu.service.application.telegram_bot.change_file_state.GifChangeState;
+import io.github.yienruuuuu.service.application.telegram_bot.change_file_state.InitialChangeFileState;
+import io.github.yienruuuuu.service.application.telegram_bot.change_file_state.PicChangeState;
+import io.github.yienruuuuu.service.application.telegram_bot.divination_state.DivinationBotState;
+import io.github.yienruuuuu.service.application.telegram_bot.divination_state.InitialDivinationState;
+import io.github.yienruuuuu.service.application.telegram_bot.divination_state.PickCardState;
 import lombok.Getter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,10 +34,22 @@ public class AppConfig {
     }
 
     @Bean
-    public Map<BotStateEnum, BotState> stateMap(InitialState initialState, PickCardState pickCardState) {
-        Map<BotStateEnum, BotState> stateMap = new HashMap<>();
-        stateMap.put(BotStateEnum.INITIAL_STATE, initialState);
-        stateMap.put(BotStateEnum.PICK_CARD_STATE, pickCardState);
+    public Map<DivinationBotStateEnum, DivinationBotState> DivinationStateMap(InitialDivinationState initialDivinationState,
+                                                                              PickCardState pickCardState) {
+        Map<DivinationBotStateEnum, DivinationBotState> stateMap = new HashMap<>();
+        stateMap.put(DivinationBotStateEnum.INITIAL_STATE, initialDivinationState);
+        stateMap.put(DivinationBotStateEnum.PICK_CARD_STATE, pickCardState);
+        return stateMap;
+    }
+
+    @Bean
+    public Map<ChangeFileBotStateEnum, ChangeFileBotState> ChangeFileStateMap(InitialChangeFileState initialChangeFileState,
+                                                                              PicChangeState picChangeState,
+                                                                              GifChangeState gifChangeState) {
+        Map<ChangeFileBotStateEnum, ChangeFileBotState> stateMap = new HashMap<>();
+        stateMap.put(ChangeFileBotStateEnum.INITIAL_STATE, initialChangeFileState);
+        stateMap.put(ChangeFileBotStateEnum.PIC_CHANGE_STATE, picChangeState);
+        stateMap.put(ChangeFileBotStateEnum.GIF_CHANGE_STATE, gifChangeState);
         return stateMap;
     }
 }

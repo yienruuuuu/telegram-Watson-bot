@@ -27,4 +27,16 @@ public class JsonUtils {
             log.error("將更新物件解析為 json 字串時出錯", e);
         }
     }
+
+    /**
+     * 轉型 json
+     */
+    public static String parseJson(Object obj) {
+        try {
+            return objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            log.error("將更新物件解析為 json 字串時出錯", e);
+        }
+        return null;
+    }
 }

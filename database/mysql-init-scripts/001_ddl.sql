@@ -33,11 +33,38 @@ CREATE TABLE gif
 (
     id               INT PRIMARY KEY AUTO_INCREMENT,
     bot_id           INT         NOT NULL,
-    type             VARCHAR(20) NOT NULL,
+    type             VARCHAR(50) NOT NULL,
     telegram_file_id TEXT        NOT NULL,
     description      TEXT,
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-)
+);
+
+-- 刪除 pic 表如果已經存在
+DROP TABLE IF EXISTS pic;
+
+-- 創建 pic 表，並且加入 bot_id 欄位來進行關聯
+CREATE TABLE pic
+(
+    id               INT PRIMARY KEY AUTO_INCREMENT,
+    bot_id           INT         NOT NULL,
+    type             VARCHAR(50) NOT NULL,
+    telegram_file_id TEXT        NOT NULL,
+    description      TEXT,
+    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 刪除 manager 表如果已經存在
+DROP TABLE IF EXISTS manager;
+
+-- 創建 manager 表，並且加入 bot_id 欄位來進行關聯
+CREATE TABLE manager
+(
+    id          INT PRIMARY KEY AUTO_INCREMENT,
+    bot_id      INT         NOT NULL,
+    telegram_id TEXT        NOT NULL,
+    description TEXT
+);
 
 

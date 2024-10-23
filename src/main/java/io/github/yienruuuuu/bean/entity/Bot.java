@@ -37,4 +37,13 @@ public class Bot extends BaseEntity {
 
     @OneToMany(mappedBy = "bot", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Language> languageSetting = new ArrayList<>();
+
+    @OneToMany(mappedBy = "bot", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Gif> gifList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "bot", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Pic> picList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "bot", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Manager> managerList = new ArrayList<>();
 }
