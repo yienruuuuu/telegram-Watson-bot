@@ -8,7 +8,9 @@ public enum ChangeFileBotStateEnum {
     //初始化模式
     INITIAL_STATE,
     //圖片異動模式
-    PIC_CHANGE_STATE,
+    UPLOAD_PIC_STATE,
+    DELETE_PIC_STATE,
     //GIF異動模式
-    GIF_CHANGE_STATE
+    UPLOAD_GIF_STATE,
+    DELETE_GIF_STATE,
 }

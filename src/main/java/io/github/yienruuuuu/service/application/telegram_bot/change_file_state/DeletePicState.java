@@ -1,11 +1,10 @@
 package io.github.yienruuuuu.service.application.telegram_bot.change_file_state;
 
 import io.github.yienruuuuu.bean.entity.Bot;
+import io.github.yienruuuuu.bean.enums.ChangeFileBotStateEnum;
 import io.github.yienruuuuu.service.application.telegram_bot.ChangeFileBot;
-import io.github.yienruuuuu.service.application.telegram_bot.DivinationBot;
 import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
-import io.github.yienruuuuu.service.application.telegram_bot.divination_state.DivinationBaseState;
-import io.github.yienruuuuu.service.application.telegram_bot.divination_state.DivinationBotState;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,19 +16,22 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  * Date: 2024/10/21
  */
 @Component
-public class PicChangeState extends ChangeFileBaseState implements ChangeFileBotState {
+@Slf4j
+public class DeletePicState extends ChangeFileBaseState implements ChangeFileBotState {
 
     @Autowired
-    public PicChangeState(TelegramBotClient telegramBotClient) {
+    public DeletePicState(TelegramBotClient telegramBotClient) {
         super(telegramBotClient);
     }
 
     @Override
     public void handleMessage(ChangeFileBot bot, Update update, Bot botEntity) {
+        bot.setState(ChangeFileBotStateEnum.INITIAL_STATE);
+        bot.consume(update);
     }
 
     @Override
     public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity) {
-
+        log.info("DeletePicState handleCallbackQuery");
     }
 }

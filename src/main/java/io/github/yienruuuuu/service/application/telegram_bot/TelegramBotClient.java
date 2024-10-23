@@ -2,7 +2,6 @@ package io.github.yienruuuuu.service.application.telegram_bot;
 
 import io.github.yienruuuuu.bean.entity.Bot;
 import io.github.yienruuuuu.service.business.BotService;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -36,8 +35,8 @@ public class TelegramBotClient {
     /**
      * 通用的 send 方法，支援所有 BotApiMethod 的子類別
      */
-    public <T extends Serializable, Method extends BotApiMethod<T>> T send(Method method, Integer botId) {
-        TelegramClient telegramClient = getOrCreateTelegramClient(botId);
+    public <T extends Serializable, Method extends BotApiMethod<T>> T send(Method method, Bot bot) {
+        TelegramClient telegramClient = getOrCreateTelegramClient(bot);
         try {
             return telegramClient.execute(method);
         } catch (TelegramApiException e) {
@@ -49,8 +48,8 @@ public class TelegramBotClient {
     /**
      * send GIF
      */
-    public Message send(SendAnimation animation, Integer botId) {
-        TelegramClient telegramClient = getOrCreateTelegramClient(botId);
+    public Message send(SendAnimation animation, Bot bot) {
+        TelegramClient telegramClient = getOrCreateTelegramClient(bot);
         try {
             return telegramClient.execute(animation);
         } catch (TelegramApiException e) {
@@ -62,8 +61,8 @@ public class TelegramBotClient {
     /**
      * send photo
      */
-    public Message send(SendPhoto photo, Integer botId) {
-        TelegramClient telegramClient = getOrCreateTelegramClient(botId);
+    public Message send(SendPhoto photo, Bot bot) {
+        TelegramClient telegramClient = getOrCreateTelegramClient(bot);
         try {
             return telegramClient.execute(photo);
         } catch (TelegramApiException e) {
@@ -75,8 +74,8 @@ public class TelegramBotClient {
     /**
      * 取得文件的通用方法
      */
-    public File getFile(GetFile getFile, Integer botId) {
-        TelegramClient telegramClient = getOrCreateTelegramClient(botId);
+    public File getFile(GetFile getFile, Bot bot) {
+        TelegramClient telegramClient = getOrCreateTelegramClient(bot);
         try {
             return telegramClient.execute(getFile);
         } catch (TelegramApiException e) {
@@ -88,8 +87,8 @@ public class TelegramBotClient {
     /**
      * 下載文件的通用方法
      */
-    public java.io.File downloadFile(File file, Integer botId) {
-        TelegramClient telegramClient = getOrCreateTelegramClient(botId);
+    public java.io.File downloadFile(File file, Bot bot) {
+        TelegramClient telegramClient = getOrCreateTelegramClient(bot);
         try {
             return telegramClient.downloadFile(file);
         } catch (TelegramApiException e) {
@@ -101,8 +100,8 @@ public class TelegramBotClient {
     /**
      * 從緩存中獲取 TelegramClient，若不存在則創建並緩存
      */
-    private TelegramClient getOrCreateTelegramClient(Integer botId) {
-        return clientCache.computeIfAbsent(botId, this::createTelegramClient);
+    private TelegramClient getOrCreateTelegramClient(Bot bot) {
+        return clientCache.computeIfAbsent(bot.getId(), this::createTelegramClient);
     }
 
     /**

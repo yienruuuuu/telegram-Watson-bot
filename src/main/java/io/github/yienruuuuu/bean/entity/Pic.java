@@ -1,9 +1,9 @@
 package io.github.yienruuuuu.bean.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.github.yienruuuuu.bean.enums.PicType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,8 +23,9 @@ public class Pic extends BaseEntity {
     private Bot bot;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private String type;
+    private PicType type;
 
     @NotNull
     @Column(name = "telegram_file_id", nullable = false)

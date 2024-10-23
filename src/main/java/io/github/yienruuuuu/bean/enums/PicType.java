@@ -10,20 +10,18 @@ import java.util.List;
  * Date: 2024/10/23
  */
 @Getter
-public enum GifType {
-    WELCOME_ANIMATION("歡迎gif"),
-    CARD_DRAWING_ANIMATION("抽牌gif"),
-    QUESTION_ANIMATION("疑問gif");
+public enum PicType {
+    DIVINATION_PIC("每日運勢靜態圖片");
 
     private final String description;
 
-    GifType(String description) {
+    PicType(String description) {
         this.description = description;
     }
 
     // 靜態方法返回所有 ActiveType 的列表
-    public static List<GifType> getAllTypes() {
-        return Arrays.asList(GifType.values());
+    public static List<PicType> getAllTypes() {
+        return Arrays.asList(PicType.values());
     }
 
 }

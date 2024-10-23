@@ -51,6 +51,8 @@ public class ChangeFileBot implements LongPollingSingleThreadUpdateConsumer {
 
         if (update.hasMessage() && update.getMessage().hasText()) {
             currentState.handleMessage(this, update, bot);
+        } else if (update.hasCallbackQuery()) {
+            currentState.handleCallbackQuery(this, update, bot);
         }
     }
 
@@ -59,7 +61,8 @@ public class ChangeFileBot implements LongPollingSingleThreadUpdateConsumer {
      * 檢查權限
      */
     private boolean hasPermissions(Bot botEntity, Update update) {
+        Long fromId = update.hasMessage() ? update.getMessage().getFrom().getId() : update.getCallbackQuery().getFrom().getId();
         return botEntity.getManagerList().stream()
-                .anyMatch(t -> t.getTelegramId().equals(String.valueOf(update.getMessage().getFrom().getId())));
+                .anyMatch(t -> t.getTelegramId().equals(String.valueOf(fromId)));
     }
 }

@@ -21,15 +21,15 @@ public class TelegramBotService {
     // TG長輪巡物件
     private TelegramBotsLongPollingApplication botsApplication;
     // 每日運勢機器人
-    private final DivinationBot divinationBot;
+    private final DivinationBot divinationBotService;
     // 上傳檔案機器人
-    private final ChangeFileBot changeFileBot;
+    private final ChangeFileBot changeFileBotService;
     private final BotService botService;
 
 
-    public TelegramBotService(DivinationBot divinationBot, ChangeFileBot changeFileBot, BotService botService) {
-        this.divinationBot = divinationBot;
-        this.changeFileBot = changeFileBot;
+    public TelegramBotService(DivinationBot divinationBotService, ChangeFileBot changeFileBotService, BotService botService) {
+        this.divinationBotService = divinationBotService;
+        this.changeFileBotService = changeFileBotService;
         this.botService = botService;
     }
 
@@ -39,8 +39,8 @@ public class TelegramBotService {
         Bot changeFileBot = botService.findBotById(2);
         try {
             botsApplication = new TelegramBotsLongPollingApplication();
-            botsApplication.registerBot(divinationBot.getBotToken(), this.divinationBot);
-            botsApplication.registerBot(changeFileBot.getBotToken(), this.changeFileBot);
+            botsApplication.registerBot(divinationBot.getBotToken(), this.divinationBotService);
+            botsApplication.registerBot(changeFileBot.getBotToken(), this.changeFileBotService);
         } catch (TelegramApiException e) {
             log.error("機器人註冊發生錯誤 , 錯誤訊息 : ", e);
         }

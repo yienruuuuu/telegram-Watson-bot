@@ -13,7 +13,7 @@ VALUES (1, 1, 'CARD_DRAWING_ANIMATION', 'CgACAgUAAxkBAAOfZxhUKD8ZfaYC4QVdLk99jav
         '爆炸');
 
 INSERT INTO tg_bot.gif (bot_id, type, telegram_file_id, description)
-VALUES (2, 'QUESTION_ANIMATION', 'CgACAgUAAxkBAAPHZxi7Hh0-9u7FYonbhLXXSBR4FDsAAigQAAI2fQFUDKRucIgPm3Y2BA', '烏薩奇蛤');
+VALUES (2, 'QUESTION_ANIMATION', 'CgACAgUAAxkBAAMJZxkOL336vuAEHFtTOiLa6RQO0fEAAigQAAI2fQFUblKUr19mN7o2BA', '烏薩奇蛤');
 
 INSERT INTO tg_bot.manager (bot_id, telegram_id, description)
 VALUES (1, '1513052214', 'boss'),

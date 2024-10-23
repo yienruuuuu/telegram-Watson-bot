@@ -50,7 +50,7 @@ public class InitialDivinationState extends DivinationBaseState implements Divin
         String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
         int messageId = callbackQuery.getMessage().getMessageId();
         // 移除按鈕
-        telegramBotClient.send(new DeleteMessage(chatId, messageId), botEntity.getId());
+        telegramBotClient.send(new DeleteMessage(chatId, messageId), botEntity);
 
         // 初始化回覆訊息
         String text = switch (callbackData) {
@@ -61,7 +61,7 @@ public class InitialDivinationState extends DivinationBaseState implements Divin
 
         SendMessage message = new SendMessage(chatId, text);
         // 這裡是傳送訊息的部分
-        telegramBotClient.send(message, botEntity.getId());
+        telegramBotClient.send(message, botEntity);
 
         sendPickCardAnimate(
                 super.randomPicOrGif(botEntity, GifType.CARD_DRAWING_ANIMATION),
@@ -104,7 +104,7 @@ public class InitialDivinationState extends DivinationBaseState implements Divin
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup(rows);
         // 將 Inline Keyboard 設置為消息的回覆鍵盤
         message.setReplyMarkup(markupInline);
-        telegramBotClient.send(message, bot.getId()); // 發送消息
+        telegramBotClient.send(message, bot); // 發送消息
     }
 
     private void sendPickCardAnimate(String gifId, String chatId, String caption, Bot botEntity) {
@@ -127,6 +127,6 @@ public class InitialDivinationState extends DivinationBaseState implements Divin
         // 設置鍵盤的按鈕
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup(rows);
         msg.setReplyMarkup(markupInline);
-        telegramBotClient.send(msg, botEntity.getId());
+        telegramBotClient.send(msg, botEntity);
     }
 }

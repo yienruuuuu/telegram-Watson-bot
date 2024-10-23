@@ -7,23 +7,21 @@ import java.util.List;
 
 /**
  * @author Eric.Lee
- * Date: 2024/10/23
+ * Date:2024/10/23
  */
 @Getter
-public enum GifType {
-    WELCOME_ANIMATION("歡迎gif"),
-    CARD_DRAWING_ANIMATION("抽牌gif"),
-    QUESTION_ANIMATION("疑問gif");
+public enum ActiveType {
+    UPLOAD("上傳"),
+    DELETE("刪除");
 
     private final String description;
 
-    GifType(String description) {
+    ActiveType(String description) {
         this.description = description;
     }
 
     // 靜態方法返回所有 ActiveType 的列表
-    public static List<GifType> getAllTypes() {
-        return Arrays.asList(GifType.values());
+    public static List<ActiveType> getAllTypes() {
+        return Arrays.asList(ActiveType.values());
     }
-
 }

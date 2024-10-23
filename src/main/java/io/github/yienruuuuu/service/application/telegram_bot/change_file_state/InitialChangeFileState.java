@@ -1,9 +1,10 @@
 package io.github.yienruuuuu.service.application.telegram_bot.change_file_state;
 
 import io.github.yienruuuuu.bean.entity.Bot;
-import io.github.yienruuuuu.bean.enums.GifType;
+import io.github.yienruuuuu.bean.enums.*;
 import io.github.yienruuuuu.service.application.telegram_bot.ChangeFileBot;
 import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
@@ -26,6 +27,7 @@ import java.util.List;
  * Date: 2024/10/21
  */
 @Component
+@Slf4j
 public class InitialChangeFileState extends ChangeFileBaseState implements ChangeFileBotState {
 
     @Autowired
@@ -45,25 +47,34 @@ public class InitialChangeFileState extends ChangeFileBaseState implements Chang
         String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
         int messageId = callbackQuery.getMessage().getMessageId();
         // 移除按鈕
-        telegramBotClient.send(new DeleteMessage(chatId, messageId), botEntity.getId());
+        telegramBotClient.send(new DeleteMessage(chatId, messageId), botEntity);
+        // 解析 callbackData (格式應為 "UPLOAD_GIF" 或 "DELETE_PIC")
+        String[] dataParts = callbackData.split("_");
+        ActiveType activeType = ActiveType.valueOf(dataParts[0]);  // 取得 ActiveType
+        FileType fileType = FileType.valueOf(dataParts[1]);  // 取得 FileType
 
-        // 初始化回覆訊息
-        String text = switch (callbackData) {
-            case "lang_ZH_TW" -> "你選擇了繁體中文。";
-            case "lang_EN" -> "You chose English.";
-            default -> "你點擊了未知按鈕?____?\n 怎麼做到的???\n 算你繁體中文";
-        };
-
-        SendMessage message = new SendMessage(chatId, text);
-        // 這裡是傳送訊息的部分
-        telegramBotClient.send(message, botEntity.getId());
-
-        sendPickCardAnimate(
-                super.randomPicOrGif(botEntity, GifType.CARD_DRAWING_ANIMATION),
-                chatId,
-                "請選擇您的每日幸運卡牌",
-                botEntity
-        );
+        // 根據 ActiveType 和 FileType 切換到對應的狀態類別
+        switch (activeType) {
+            case UPLOAD:
+                if (fileType == FileType.GIF) {
+                    bot.setState(ChangeFileBotStateEnum.UPLOAD_GIF_STATE);
+                } else if (fileType == FileType.PIC) {
+                    bot.setState(ChangeFileBotStateEnum.UPLOAD_PIC_STATE);
+                }
+                break;
+            case DELETE:
+                if (fileType == FileType.GIF) {
+                    bot.setState(ChangeFileBotStateEnum.DELETE_GIF_STATE);
+                } else if (fileType == FileType.PIC) {
+                    bot.setState(ChangeFileBotStateEnum.DELETE_PIC_STATE);
+                }
+                break;
+            default:
+                telegramBotClient.send(new SendMessage(chatId, "預料之外的操作，請重新開始"), botEntity);
+                bot.setState(ChangeFileBotStateEnum.INITIAL_STATE);
+                bot.consume(update);
+        }
+        sendTypeSelection(super.randomGif(botEntity, GifType.QUESTION_ANIMATION), chatId, botEntity, fileType);
     }
 
     // private
@@ -73,51 +84,73 @@ public class InitialChangeFileState extends ChangeFileBaseState implements Chang
      */
     private void sendHelloMessageAndChooseChangeType(Update update, Bot botEntity) {
         long chatId = update.getMessage().getChatId();
-        SendMessage message = new SendMessage(String.valueOf(chatId), "MASTER 歡迎回來，檔案異動模式 啟動!\n 請選擇要進入的異動模式");
-        List<String> typeList = List.of("上傳", "刪除");
+        String fileId = super.randomGif(botEntity, GifType.QUESTION_ANIMATION);
+
+        SendAnimation message = SendAnimation
+                .builder()
+                .chatId(chatId)
+                .animation(new InputFile(fileId))
+                .caption("MASTER 歡迎回來，檔案異動模式 啟動!\n請問要異動哪種資源呢?")
+                .build();
 
         // 創建 Inline Keyboard 的行和按鈕
         List<InlineKeyboardRow> rows = new ArrayList<>();
+        // 遍歷每個 ActiveType 和 FileType 的組合並創建按鈕
+        for (ActiveType activeType : ActiveType.getAllTypes()) {
+            for (FileType fileType : FileType.getAllTypes()) {
+                // 按鈕文字顯示: ActiveType + FileType 的 description
+                String buttonText = activeType.getDescription() + " " + fileType.getDescription();
 
-        // 遍歷每個語言類型並為每個語言創建一個按鈕
-        for (String type : typeList) {
+                // callbackData 可攜帶 ActiveType 和 FileType 的名稱
+                String callbackData = activeType.name() + "_" + fileType.name();
+
+                InlineKeyboardButton button = InlineKeyboardButton.builder()
+                        .text(buttonText)
+                        .callbackData(callbackData)
+                        .build();
+
+                // 為每個按鈕創建一行並添加
+                InlineKeyboardRow rowInline = new InlineKeyboardRow();
+                rowInline.add(button);
+                rows.add(rowInline);
+            }
+        }
+        // 將 Inline Keyboard 設置為消息的回覆鍵盤
+        message.setReplyMarkup(new InlineKeyboardMarkup(rows));
+        telegramBotClient.send(message, botEntity);
+    }
+
+    private void sendTypeSelection(String gifId, String chatId, Bot botEntity, FileType fileType) {
+        SendAnimation msg = SendAnimation
+                .builder()
+                .chatId(chatId)
+                .animation(new InputFile(gifId))
+                .caption("請選擇類型")
+                .build();
+
+        // 創建 Inline Keyboard 的行和按鈕
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+        // 動態選擇 GifType 或 PicType 列表
+        List<? extends Enum<?>> types = (fileType.equals(FileType.GIF)) ? GifType.getAllTypes() : PicType.getAllTypes();
+        for (Enum<?> type : types) {
+            String description = "";
+            if (type instanceof GifType gifType) {
+                description = gifType.getDescription();
+            } else if (type instanceof PicType picType) {
+                description = picType.getDescription();
+            }
+            // 創建按鈕，顯示 description，callbackData 傳遞 name()
             InlineKeyboardButton button = InlineKeyboardButton.builder()
-                    .text(type)
-                    .callbackData("change_type_" + type)
+                    .text(description)
+                    .callbackData(type.name())
                     .build();
 
-            // 為每個按鈕創建一行並添加
             InlineKeyboardRow rowInline = new InlineKeyboardRow();
             rowInline.add(button);
             rows.add(rowInline);
         }
         // 設置鍵盤的按鈕
-        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup(rows);
-        // 將 Inline Keyboard 設置為消息的回覆鍵盤
-        message.setReplyMarkup(markupInline);
-        telegramBotClient.send(message, botEntity.getId());
-    }
-
-    private void sendPickCardAnimate(String gifId, String chatId, String caption, Bot botEntity) {
-        SendAnimation msg = SendAnimation
-                .builder()
-                .chatId(chatId)
-                .animation(new InputFile(gifId))
-                .caption(caption)
-                .build();
-
-        // 創建 Inline Keyboard 的行和按鈕
-        List<InlineKeyboardRow> rows = new ArrayList<>();
-        InlineKeyboardRow rowInline = new InlineKeyboardRow();
-        addButtonText(rowInline, "♈️", "choose_card");
-        addButtonText(rowInline, "☯️", "choose_card");
-        addButtonText(rowInline, "☸", "choose_card");
-        addButtonText(rowInline, "⚛", "choose_card");
-        rows.add(rowInline);
-
-        // 設置鍵盤的按鈕
-        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup(rows);
-        msg.setReplyMarkup(markupInline);
-        telegramBotClient.send(msg, botEntity.getId());
+        msg.setReplyMarkup(new InlineKeyboardMarkup(rows));
+        telegramBotClient.send(msg, botEntity);
     }
 }

@@ -53,11 +53,11 @@ public class PickCardState implements DivinationBotState {
                 .messageId(messageId)
                 .build();
         // 更新訊息的按鈕狀態
-        telegramBotClient.send(deleteMessage,botEntity.getId());
+        telegramBotClient.send(deleteMessage,botEntity);
 
         SendMessage message = new SendMessage(String.valueOf(chatId), text);
         // 這裡是傳送訊息的部分
-        telegramBotClient.send(message,botEntity.getId());
+        telegramBotClient.send(message,botEntity);
     }
 
 }

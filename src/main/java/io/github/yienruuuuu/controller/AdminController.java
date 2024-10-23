@@ -76,15 +76,15 @@ public class AdminController {
         // 設置鍵盤的按鈕
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup(rows);
         msg.setReplyMarkup(markupInline);
-        telegramBotClient.send(msg,1);
+        telegramBotClient.send(msg,botService.findBotById(1));
     }
 
     @Schema(description = "測試下載gif檔案")
     @PostMapping(value = "bots/getFile")
     public ResponseEntity<InputStreamResource> getFile() throws FileNotFoundException {
         String fileId = "CgACAgUAAxkBAAN_ZxceZdd_Lec6WQVxK9D4sWhwnCsAApQBAALiPhFUA836rU1-ARk2BA";
-        File file = telegramBotClient.getFile(new GetFile(fileId),1);
-        java.io.File downloadedFile = telegramBotClient.downloadFile(file,1);  // 返回下載的文件
+        File file = telegramBotClient.getFile(new GetFile(fileId),botService.findBotById(1));
+        java.io.File downloadedFile = telegramBotClient.downloadFile(file,botService.findBotById(1));  // 返回下載的文件
 
         if (downloadedFile == null) {
             // 文件下載失敗時的處理
@@ -113,7 +113,7 @@ public class AdminController {
                 .caption("請選擇您的每日幸運卡牌(可能含有色情圖片，請確認是否已滿18歲)")
                 .build();
 
-        Message mss = telegramBotClient.send(msg,1);
+        Message mss = telegramBotClient.send(msg,botService.findBotById(1));
         JsonUtils.parseJsonAndPrintLog("收到響應", mss);
     }
 
