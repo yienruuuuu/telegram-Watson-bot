@@ -2,13 +2,18 @@ package io.github.yienruuuuu.service.application.telegram_bot.divination_state;
 
 import io.github.yienruuuuu.bean.entity.Bot;
 import io.github.yienruuuuu.bean.enums.DivinationBotStateEnum;
+import io.github.yienruuuuu.bean.enums.PicType;
 import io.github.yienruuuuu.service.application.telegram_bot.DivinationBot;
 import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
+import io.github.yienruuuuu.service.business.TextService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.File;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
@@ -19,45 +24,37 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  */
 @Component
 @Slf4j
-public class PickCardState implements DivinationBotState {
-    private final TelegramBotClient telegramBotClient;
+public class PickCardState extends DivinationBaseState implements DivinationBotState {
 
-    public PickCardState(TelegramBotClient telegramBotClient) {
-        this.telegramBotClient = telegramBotClient;
+    public PickCardState(TelegramBotClient telegramBotClient, TextService textService) {
+        super(telegramBotClient, textService);
     }
-
 
     @Override
     public void handleMessage(DivinationBot bot, Update update, Bot botEntity) {
-        bot.setState(DivinationBotStateEnum.INITIAL_STATE);
+        bot.setState(String.valueOf(update.getMessage().getChatId()), DivinationBotStateEnum.INITIAL_STATE);
         bot.consume(update);
     }
 
     @Override
     public void handleCallbackQuery(DivinationBot bot, Update update, Bot botEntity) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
-        String callbackData = callbackQuery.getData();
-        long chatId = callbackQuery.getMessage().getChatId();
+        String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
         int messageId = callbackQuery.getMessage().getMessageId();
-
-        // 初始化回覆訊息
-        String text = switch (callbackData) {
-            case "lang_ZH_TW" -> "你選擇了繁體中文。";
-            case "lang_EN" -> "You chose English.";
-            default -> "你點擊了未知按鈕?____?\n 怎麼做到的???\n 算你繁體中文";
-        };
-
         // 移除按鈕
-        DeleteMessage deleteMessage = DeleteMessage.builder()
+        telegramBotClient.send(new DeleteMessage(chatId, messageId), botEntity);
+        String fileId = randomPic(botEntity, PicType.DIVINATION_PIC);
+        log.warn("fileId: {}", fileId);
+        File file = telegramBotClient.getFile(new GetFile(fileId), botEntity);
+        log.warn("file: {}", file);
+
+        SendPhoto sendPhoto = SendPhoto.builder()
+                .photo(new InputFile(file.getFileId()))
                 .chatId(chatId)
-                .messageId(messageId)
+                .caption("今日運勢:吉")
                 .build();
-        // 更新訊息的按鈕狀態
-        telegramBotClient.send(deleteMessage,botEntity);
 
-        SendMessage message = new SendMessage(String.valueOf(chatId), text);
         // 這裡是傳送訊息的部分
-        telegramBotClient.send(message,botEntity);
+        telegramBotClient.send(sendPhoto, botEntity);
     }
-
 }

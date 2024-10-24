@@ -62,9 +62,24 @@ DROP TABLE IF EXISTS manager;
 CREATE TABLE manager
 (
     id          INT PRIMARY KEY AUTO_INCREMENT,
-    bot_id      INT         NOT NULL,
-    telegram_id TEXT        NOT NULL,
+    bot_id      INT  NOT NULL,
+    telegram_id TEXT NOT NULL,
     description TEXT
 );
+
+-- 刪除 text 表如果已經存在
+DROP TABLE IF EXISTS text;
+
+-- 創建 text 表
+CREATE TABLE text
+(
+    id            INT PRIMARY KEY AUTO_INCREMENT,
+    type          VARCHAR(50) NOT NULL,
+    language_type VARCHAR(50) NOT NULL,
+    content       TEXT        NOT NULL,
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 
 

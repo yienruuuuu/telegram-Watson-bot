@@ -18,3 +18,13 @@ VALUES (2, 'QUESTION_ANIMATION', 'CgACAgUAAxkBAAMJZxkOL336vuAEHFtTOiLa6RQO0fEAAi
 INSERT INTO tg_bot.manager (bot_id, telegram_id, description)
 VALUES (1, '1513052214', 'boss'),
        (2, '1513052214', 'boss');
+
+INSERT INTO tg_bot.text (type, language_type, content)
+VALUES ('WELCOME_MESSAGE', 'EN', 'welcome to use daily divination !'),
+       ('WELCOME_MESSAGE', 'ZH_TW', '歡迎使用 每日運勢抽獎~');
+
+INSERT INTO tg_bot.text (type, language_type, content)
+VALUES ('ASK_FOR_LANGUAGE', 'ZH_TW', '請選擇大哥你想使用的語言~');
+INSERT INTO tg_bot.text (type, language_type, content)
+VALUES ('ASK_FOR_LANGUAGE', 'EN', 'please choose you favorite language');
+

@@ -39,44 +39,25 @@ public class InitialChangeFileState extends ChangeFileBaseState implements Chang
     }
 
     @Override
-    public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity) {
+    public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         String callbackData = callbackQuery.getData();
         String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
         int messageId = callbackQuery.getMessage().getMessageId();
         // 移除按鈕
         telegramBotClient.send(new DeleteMessage(chatId, messageId), botEntity);
-        // 解析 callbackData (格式應為 "UPLOAD_GIF" 或 "DELETE_PIC")
-        String[] dataParts = callbackData.split("_");
-        ActiveType activeType = ActiveType.valueOf(dataParts[0]);  // 取得 ActiveType
-        FileType fileType = FileType.valueOf(dataParts[1]);  // 取得 FileType
 
-        // 根據 ActiveType 和 FileType 切換到對應的狀態類別
-        switch (activeType) {
-            case UPLOAD:
-                if (fileType == FileType.GIF) {
-                    bot.setState(ChangeFileBotStateEnum.UPLOAD_GIF_STATE);
-                } else if (fileType == FileType.PIC) {
-                    bot.setState(ChangeFileBotStateEnum.UPLOAD_PIC_STATE);
-                }
-                break;
-            case DELETE:
-                if (fileType == FileType.GIF) {
-                    bot.setState(ChangeFileBotStateEnum.DELETE_GIF_STATE);
-                } else if (fileType == FileType.PIC) {
-                    bot.setState(ChangeFileBotStateEnum.DELETE_PIC_STATE);
-                }
-                break;
-            default:
-                telegramBotClient.send(new SendMessage(chatId, "預料之外的操作，請重新開始"), botEntity);
-                bot.setState(ChangeFileBotStateEnum.INITIAL_STATE);
-                bot.consume(update);
+        // 解析 callbackData 並呼叫對應方法
+        if (callbackData.startsWith(ActiveType.UPLOAD.name()) || callbackData.startsWith(ActiveType.DELETE.name())) {
+            handleActiveTypeSelectionAndNextSelection(bot, update, chatId, botEntity, callbackData);
+        } else {
+            telegramBotClient.send(new SendMessage(chatId, "預料之外的操作，請重新開始"), botEntity);
+            bot.setState(ChangeFileBotStateEnum.INITIAL_STATE);
         }
-        sendTypeSelection(super.randomGif(botEntity, GifType.QUESTION_ANIMATION), chatId, botEntity, fileType);
     }
 
     @Override
-    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity) {
+    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity) {
     }
 
     // private
@@ -122,6 +103,38 @@ public class InitialChangeFileState extends ChangeFileBaseState implements Chang
         telegramBotClient.send(message, botEntity);
     }
 
+    private void handleActiveTypeSelectionAndNextSelection(ChangeFileBot bot, Update update, String chatId, Bot botEntity, String callbackData) {
+        String[] dataParts = callbackData.split("_");
+        ActiveType activeType = ActiveType.valueOf(dataParts[0]);  // 取得 ActiveType
+        FileType fileType = FileType.valueOf(dataParts[1]);  // 取得 FileType
+
+        // 根據 ActiveType 和 FileType 切換到對應的狀態類別
+        switch (activeType) {
+            case UPLOAD:
+                if (fileType == FileType.GIF) {
+                    bot.setState(ChangeFileBotStateEnum.UPLOAD_GIF_STATE);
+                } else if (fileType == FileType.PIC) {
+                    bot.setState(ChangeFileBotStateEnum.UPLOAD_PIC_STATE);
+                }
+                break;
+            case DELETE:
+                if (fileType == FileType.GIF) {
+                    bot.setState(ChangeFileBotStateEnum.DELETE_GIF_STATE);
+                } else if (fileType == FileType.PIC) {
+                    bot.setState(ChangeFileBotStateEnum.DELETE_PIC_STATE);
+                }
+                break;
+            default:
+                telegramBotClient.send(new SendMessage(chatId, "預料之外的操作，請重新開始"), botEntity);
+                bot.setState(ChangeFileBotStateEnum.INITIAL_STATE);
+                bot.consume(update);
+        }
+        sendTypeSelection(super.randomGif(botEntity, GifType.QUESTION_ANIMATION), chatId, botEntity, fileType);
+    }
+
+    /**
+     * 傳送類型選擇
+     */
     private void sendTypeSelection(String gifId, String chatId, Bot botEntity, FileType fileType) {
         SendAnimation msg = SendAnimation
                 .builder()

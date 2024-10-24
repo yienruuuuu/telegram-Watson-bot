@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public interface ChangeFileBotState {
     void handleMessage(ChangeFileBot bot, Update update, Bot botEntity);
 
-    void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity);
+    void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity);
 
-    void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity);
+    void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity);
 }

@@ -36,7 +36,7 @@ public class UploadGifState extends ChangeFileBaseState implements ChangeFileBot
     }
 
     @Override
-    public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity) {
+    public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         String callbackData = callbackQuery.getData();
         String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
@@ -48,7 +48,7 @@ public class UploadGifState extends ChangeFileBaseState implements ChangeFileBot
     }
 
     @Override
-    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity) {
+    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity) {
         String chatId = String.valueOf(update.getMessage().getChatId());
         if (!update.getMessage().hasAnimation()){
             telegramBotClient.send(new SendMessage(chatId, "請傳送GIF"), botEntity);
@@ -57,11 +57,11 @@ public class UploadGifState extends ChangeFileBaseState implements ChangeFileBot
         Gif newGif = Gif.builder()
                 .type(gifType)
                 .telegramFileId(update.getMessage().getAnimation().getFileId())
-                .bot(botEntity)
+                .bot(mainBotEntity)
                 .build();
 
-        botEntity.getGifList().add(newGif);
-        botService.save(botEntity);
+        mainBotEntity.getGifList().add(newGif);
+        botService.save(mainBotEntity);
         // 發送確認訊息
         telegramBotClient.send(new SendMessage(chatId, "GIF 已成功儲存"), botEntity);
     }

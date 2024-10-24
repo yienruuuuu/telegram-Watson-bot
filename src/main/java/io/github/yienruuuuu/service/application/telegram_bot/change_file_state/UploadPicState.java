@@ -36,7 +36,7 @@ public class UploadPicState extends ChangeFileBaseState implements ChangeFileBot
     }
 
     @Override
-    public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity) {
+    public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         String callbackData = callbackQuery.getData();
         String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
@@ -48,7 +48,7 @@ public class UploadPicState extends ChangeFileBaseState implements ChangeFileBot
     }
 
     @Override
-    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity) {
+    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity) {
         String chatId = String.valueOf(update.getMessage().getChatId());
         if (!update.getMessage().hasPhoto()) {
             telegramBotClient.send(new SendMessage(chatId, "請傳送PIC"), botEntity);
@@ -57,11 +57,11 @@ public class UploadPicState extends ChangeFileBaseState implements ChangeFileBot
         Pic newPic = Pic.builder()
                 .type(picType)
                 .telegramFileId(update.getMessage().getPhoto().get(1).getFileId())
-                .bot(botEntity)
+                .bot(mainBotEntity)
                 .build();
 
-        botEntity.getPicList().add(newPic);
-        botService.save(botEntity);
+        mainBotEntity.getPicList().add(newPic);
+        botService.save(mainBotEntity);
         // 發送確認訊息
         telegramBotClient.send(new SendMessage(chatId, "PIC 已成功儲存"), botEntity);
     }

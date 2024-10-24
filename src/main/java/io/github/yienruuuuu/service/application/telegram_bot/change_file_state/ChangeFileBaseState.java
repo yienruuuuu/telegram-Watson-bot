@@ -2,7 +2,6 @@ package io.github.yienruuuuu.service.application.telegram_bot.change_file_state;
 
 import io.github.yienruuuuu.bean.entity.Bot;
 import io.github.yienruuuuu.bean.entity.Gif;
-import io.github.yienruuuuu.bean.entity.Pic;
 import io.github.yienruuuuu.bean.enums.GifType;
 import io.github.yienruuuuu.bean.enums.PicType;
 import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
@@ -60,22 +59,23 @@ public class ChangeFileBaseState {
         return randomGif.getTelegramFileId();
     }
 
-    /**
-     * 從BOT關聯下，從指定的gif類型中隨機選擇一個gif並返回其telegram file id
-     */
-    protected String randomPic(Bot botEntity, PicType picType) {
-        List<Pic> filteredPicList = botEntity.getPicList().stream()
-                .filter(pic -> picType.equals(pic.getType()))
-                .toList();
-
-        if (filteredPicList.isEmpty()) {
-            log.warn("Pic type {} not exist", picType);
-            return null;
+    // 判斷是否為有效的 GifType
+    protected boolean isGifType(String callbackData) {
+        for (GifType gifType : GifType.values()) {
+            if (gifType.name().equals(callbackData)) {
+                return true;
+            }
         }
-        // 從篩選結果中隨機選擇一個
-        Pic randomPic = filteredPicList.get(random.nextInt(filteredPicList.size()));
+        return false;
+    }
 
-        // 假設你想返回 Gif 的某個屬性，比如 URL
-        return randomPic.getTelegramFileId();
+    // 判斷是否為有效的 PicType
+    protected boolean isPicType(String callbackData) {
+        for (PicType picType : PicType.values()) {
+            if (picType.name().equals(callbackData)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

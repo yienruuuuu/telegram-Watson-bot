@@ -44,7 +44,7 @@ public class DeletePicState extends ChangeFileBaseState implements ChangeFileBot
     }
 
     @Override
-    public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity) {
+    public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         String callbackData = callbackQuery.getData();
         String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
@@ -55,25 +55,25 @@ public class DeletePicState extends ChangeFileBaseState implements ChangeFileBot
 
         if (isPicType(callbackData)) {
             PicType picType = PicType.valueOf(callbackData);
-            handlePicTypeSelection(picType, chatId, botEntity);
+            handlePicTypeSelection(picType, chatId, botEntity, mainBotEntity);
         } else {
-            handlePicDeletion(callbackData, chatId, botEntity);
+            handlePicDeletion(callbackData, chatId, botEntity, mainBotEntity);
         }
     }
 
     @Override
-    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity) {
+    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity, Bot mainBotEntity) {
     }
 
 
-    private void handlePicTypeSelection(PicType picType, String chatId, Bot botEntity) {
+    private void handlePicTypeSelection(PicType picType, String chatId, Bot botEntity, Bot mainBotEntity) {
         // 根據 GifType 過濾出對應的 Gif 列表
-        List<Pic> filteredPicList = botEntity.getPicList().stream()
+        List<Pic> filteredPicList = mainBotEntity.getPicList().stream()
                 .filter(pic -> picType.equals(pic.getType()))
                 .toList();
 
         if (filteredPicList.isEmpty()) {
-            telegramBotClient.send(new SendMessage(chatId, "沒有可用的 Pic"), botEntity);
+            telegramBotClient.send(new SendMessage(chatId, "沒有可用的 Pic"), mainBotEntity);
             return;
         }
 
@@ -103,25 +103,15 @@ public class DeletePicState extends ChangeFileBaseState implements ChangeFileBot
         }
     }
 
-    private void handlePicDeletion(String fileId, String chatId, Bot botEntity) {
-        List<Pic> picList = botEntity.getPicList();
+    private void handlePicDeletion(String fileId, String chatId, Bot botEntity, Bot mainBotEntity) {
+        List<Pic> picList = mainBotEntity.getPicList();
         boolean removed = picList.removeIf(pic -> String.valueOf(pic.getId()).equals(fileId));
 
         if (removed) {
-            botService.save(botEntity);
+            botService.save(mainBotEntity);
             telegramBotClient.send(new SendMessage(chatId, "PIC 已刪除"), botEntity);
         } else {
             telegramBotClient.send(new SendMessage(chatId, "找不到要刪除的 PIC"), botEntity);
         }
-    }
-
-    // 判斷是否為有效的 PicType
-    private boolean isPicType(String callbackData) {
-        for (PicType picType : PicType.values()) {
-            if (picType.name().equals(callbackData)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
