@@ -50,6 +50,7 @@ CREATE TABLE pic
     bot_id           INT         NOT NULL,
     type             VARCHAR(50) NOT NULL,
     telegram_file_id TEXT        NOT NULL,
+    file_bot_file_id TEXT        NOT NULL,
     description      TEXT,
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

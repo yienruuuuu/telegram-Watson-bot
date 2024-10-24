@@ -9,10 +9,15 @@ import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
 import io.github.yienruuuuu.service.business.BotService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.File;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 /**
  * 初始狀態
@@ -54,12 +59,19 @@ public class UploadPicState extends ChangeFileBaseState implements ChangeFileBot
             telegramBotClient.send(new SendMessage(chatId, "請傳送PIC"), botEntity);
             return;
         }
+        //使用主BOT上傳文件並取得fileId
+        String fileId = update.getMessage().getPhoto().get(1).getFileId();
+        File file = telegramBotClient.getFile(new GetFile(fileId), botEntity);
+        java.io.File downloadedFile = telegramBotClient.downloadFile(file, botEntity);
+        Message resMessage = telegramBotClient.send(new SendPhoto("1513052214", new InputFile(downloadedFile)), mainBotEntity);
+        telegramBotClient.send(new DeleteMessage("1513052214", resMessage.getMessageId()), mainBotEntity);
+
         Pic newPic = Pic.builder()
                 .type(picType)
-                .telegramFileId(update.getMessage().getPhoto().get(1).getFileId())
+                .telegramFileId(resMessage.getPhoto().get(0).getFileId())
+                .fileBotFileId(fileId)
                 .bot(mainBotEntity)
                 .build();
-
         mainBotEntity.getPicList().add(newPic);
         botService.save(mainBotEntity);
         // 發送確認訊息

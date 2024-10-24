@@ -33,6 +33,10 @@ public class Pic extends BaseEntity {
     @Column(name = "telegram_file_id", nullable = false)
     private String telegramFileId;
 
+    @NotNull
+    @Column(name = "file_bot_file_id", nullable = false)
+    private String fileBotFileId;
+
     @Column(name = "description")
     private String description;
 

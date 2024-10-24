@@ -67,7 +67,7 @@ public class DeletePicState extends ChangeFileBaseState implements ChangeFileBot
 
 
     private void handlePicTypeSelection(PicType picType, String chatId, Bot botEntity, Bot mainBotEntity) {
-        // 根據 GifType 過濾出對應的 Gif 列表
+        // 根據 PicType 過濾出對應的 Pic 列表
         List<Pic> filteredPicList = mainBotEntity.getPicList().stream()
                 .filter(pic -> picType.equals(pic.getType()))
                 .toList();
@@ -86,7 +86,7 @@ public class DeletePicState extends ChangeFileBaseState implements ChangeFileBot
         for (Pic pic : filteredPicList) {
             SendPhoto sendPhoto = SendPhoto.builder()
                     .chatId(chatId)
-                    .photo(new InputFile(pic.getTelegramFileId()))
+                    .photo(new InputFile(pic.getFileBotFileId()))
                     .build();
 
             List<InlineKeyboardRow> rows = new ArrayList<>();
