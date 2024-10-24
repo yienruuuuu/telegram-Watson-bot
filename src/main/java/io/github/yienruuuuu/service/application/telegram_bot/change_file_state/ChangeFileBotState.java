@@ -12,4 +12,6 @@ public interface ChangeFileBotState {
     void handleMessage(ChangeFileBot bot, Update update, Bot botEntity);
 
     void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity);
+
+    void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity);
 }

@@ -53,6 +53,8 @@ public class ChangeFileBot implements LongPollingSingleThreadUpdateConsumer {
             currentState.handleMessage(this, update, bot);
         } else if (update.hasCallbackQuery()) {
             currentState.handleCallbackQuery(this, update, bot);
+        } else {
+            currentState.handleFileUpdate(this, update, bot);
         }
     }
 

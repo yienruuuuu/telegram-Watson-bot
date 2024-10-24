@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.yienruuuuu.bean.enums.GifType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "gif", schema = "tg_bot")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Gif extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

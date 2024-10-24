@@ -4,8 +4,8 @@ import io.github.yienruuuuu.bean.entity.Bot;
 import io.github.yienruuuuu.bean.enums.*;
 import io.github.yienruuuuu.service.application.telegram_bot.ChangeFileBot;
 import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
+import io.github.yienruuuuu.service.business.BotService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -29,10 +29,8 @@ import java.util.List;
 @Component
 @Slf4j
 public class InitialChangeFileState extends ChangeFileBaseState implements ChangeFileBotState {
-
-    @Autowired
-    public InitialChangeFileState(TelegramBotClient telegramBotClient) {
-        super(telegramBotClient);
+    public InitialChangeFileState(TelegramBotClient telegramBotClient, BotService botService) {
+        super(telegramBotClient, botService);
     }
 
     @Override
@@ -75,6 +73,10 @@ public class InitialChangeFileState extends ChangeFileBaseState implements Chang
                 bot.consume(update);
         }
         sendTypeSelection(super.randomGif(botEntity, GifType.QUESTION_ANIMATION), chatId, botEntity, fileType);
+    }
+
+    @Override
+    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity) {
     }
 
     // private

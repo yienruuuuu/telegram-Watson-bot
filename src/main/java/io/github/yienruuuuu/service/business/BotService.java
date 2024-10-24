@@ -11,4 +11,6 @@ public interface BotService {
     List<Bot> findAll();
 
     Bot findBotById(Integer id);
+
+    Bot save(Bot bot);
 }

@@ -1,12 +1,17 @@
 package io.github.yienruuuuu.service.application.telegram_bot.change_file_state;
 
 import io.github.yienruuuuu.bean.entity.Bot;
+import io.github.yienruuuuu.bean.entity.Gif;
 import io.github.yienruuuuu.bean.enums.ChangeFileBotStateEnum;
+import io.github.yienruuuuu.bean.enums.GifType;
 import io.github.yienruuuuu.service.application.telegram_bot.ChangeFileBot;
 import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
+import io.github.yienruuuuu.service.business.BotService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
@@ -18,10 +23,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 @Slf4j
 public class UploadGifState extends ChangeFileBaseState implements ChangeFileBotState {
+    private GifType gifType;
 
-    @Autowired
-    public UploadGifState(TelegramBotClient telegramBotClient) {
-        super(telegramBotClient);
+    public UploadGifState(TelegramBotClient telegramBotClient, BotService botService) {
+        super(telegramBotClient, botService);
     }
 
     @Override
@@ -32,8 +37,32 @@ public class UploadGifState extends ChangeFileBaseState implements ChangeFileBot
 
     @Override
     public void handleCallbackQuery(ChangeFileBot bot, Update update, Bot botEntity) {
-        log.info("UploadGifState handleCallbackQuery");
+        CallbackQuery callbackQuery = update.getCallbackQuery();
+        String callbackData = callbackQuery.getData();
+        String chatId = String.valueOf(callbackQuery.getMessage().getChatId());
+        int messageId = callbackQuery.getMessage().getMessageId();
+        // 移除按鈕
+        telegramBotClient.send(new DeleteMessage(chatId, messageId), botEntity);
+        gifType = GifType.valueOf(callbackData);
+        telegramBotClient.send(new SendMessage(chatId, "請傳送GIF"), botEntity);
     }
 
+    @Override
+    public void handleFileUpdate(ChangeFileBot bot, Update update, Bot botEntity) {
+        String chatId = String.valueOf(update.getMessage().getChatId());
+        if (!update.getMessage().hasAnimation()){
+            telegramBotClient.send(new SendMessage(chatId, "請傳送GIF"), botEntity);
+            return;
+        }
+        Gif newGif = Gif.builder()
+                .type(gifType)
+                .telegramFileId(update.getMessage().getAnimation().getFileId())
+                .bot(botEntity)
+                .build();
 
+        botEntity.getGifList().add(newGif);
+        botService.save(botEntity);
+        // 發送確認訊息
+        telegramBotClient.send(new SendMessage(chatId, "GIF 已成功儲存"), botEntity);
+    }
 }

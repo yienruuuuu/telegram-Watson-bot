@@ -6,6 +6,7 @@ import io.github.yienruuuuu.bean.entity.Pic;
 import io.github.yienruuuuu.bean.enums.GifType;
 import io.github.yienruuuuu.bean.enums.PicType;
 import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
+import io.github.yienruuuuu.service.business.BotService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -23,9 +24,11 @@ import java.util.Random;
 public class ChangeFileBaseState {
     private static final Random random = new Random();
     protected final TelegramBotClient telegramBotClient;
+    protected final BotService botService;
 
-    public ChangeFileBaseState(TelegramBotClient telegramBotClient) {
+    public ChangeFileBaseState(TelegramBotClient telegramBotClient, BotService botService) {
         this.telegramBotClient = telegramBotClient;
+        this.botService = botService;
     }
 
     protected void addButtonText(InlineKeyboardRow rowInline, String sign, String callBackData) {
