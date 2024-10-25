@@ -1,8 +1,11 @@
 package io.github.yienruuuuu.controller;
 
 import io.github.yienruuuuu.bean.entity.Bot;
+import io.github.yienruuuuu.bean.entity.CardPosition;
+import io.github.yienruuuuu.bean.enums.TarotInterpretationType;
 import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
 import io.github.yienruuuuu.service.business.BotService;
+import io.github.yienruuuuu.service.business.CardPositionService;
 import io.github.yienruuuuu.utils.JsonUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,16 +46,30 @@ import java.util.List;
 public class AdminController {
     private final BotService botService;
     private final TelegramBotClient telegramBotClient;
+    private final CardPositionService cardPositionService;
 
-    public AdminController(BotService botService, TelegramBotClient telegramBotClient) {
+    public AdminController(BotService botService, TelegramBotClient telegramBotClient, CardPositionService cardPositionService) {
         this.botService = botService;
         this.telegramBotClient = telegramBotClient;
+        this.cardPositionService = cardPositionService;
     }
 
     @Schema(description = "測試取得全部的bot")
     @GetMapping(value = "bots")
     public List<Bot> bots() {
         return botService.findAll();
+    }
+
+    @Schema(description = "測試取得全部的塔羅牌")
+    @GetMapping(value = "tarots")
+    public List<CardPosition> getTarots() {
+        return cardPositionService.findAll();
+    }
+
+    @Schema(description = "測試取得特定條件的塔羅牌")
+    @GetMapping(value = "tarots/{interpretationType}")
+    public List<CardPosition> getTarotsByType(@PathVariable TarotInterpretationType interpretationType) {
+        return cardPositionService.findCardPositionsByInterpretationType(interpretationType);
     }
 
     @Schema(description = "測試傳送訊息給特定的chatId")

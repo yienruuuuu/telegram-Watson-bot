@@ -84,33 +84,32 @@ CREATE TABLE text
 
 
 -- 創建 Card 表
-DROP TABLE IF EXISTS Card;
+DROP TABLE IF EXISTS tarot_card;
 CREATE TABLE tarot_card
 (
-    card_id     INT AUTO_INCREMENT PRIMARY KEY COMMENT '每張牌的唯一標識',
+    id     INT AUTO_INCREMENT PRIMARY KEY COMMENT '每張牌的唯一標識',
     name        VARCHAR(50) NOT NULL COMMENT '塔羅牌名稱',
     category    VARCHAR(50) NOT NULL COMMENT '塔羅牌的分類（如大阿爾卡納）',
     description TEXT COMMENT '牌的基本描述'
 ) COMMENT = '存儲塔羅牌的基本信息';
 
 -- 創建 CardPosition 表
-DROP TABLE IF EXISTS CardPosition;
+DROP TABLE IF EXISTS card_position;
 CREATE TABLE card_position
 (
-    position_id         INT AUTO_INCREMENT PRIMARY KEY COMMENT '每個解釋類型的唯一標識',
-    card_id             INT         NOT NULL COMMENT '外鍵，參照 Card 表中的 card_id',
-    position            VARCHAR(10) NOT NULL COMMENT '牌的位置（正位或逆位）',
-    interpretation_type VARCHAR(20) NOT NULL COMMENT '解釋的類型（如現狀、對方想法、未來等）',
+    id         INT AUTO_INCREMENT PRIMARY KEY COMMENT '每個解釋類型的唯一標識',
+    card_id             INT         NOT NULL COMMENT '外鍵，參照 tarot_card 表的 id',
+    position            VARCHAR(50) NOT NULL COMMENT '牌的位置（正位或逆位）',
+    interpretation_type VARCHAR(50) NOT NULL COMMENT '解釋的類型（如現狀、對方想法、未來等）'
 ) COMMENT = '記錄塔羅牌的正位和逆位及其解釋類型';
 
 -- 創建 CardInterpretation 表
-DROP TABLE IF EXISTS CardInterpretation;
+DROP TABLE IF EXISTS card_interpretation;
 CREATE TABLE card_interpretation
 (
-    interpretation_id   INT AUTO_INCREMENT PRIMARY KEY COMMENT '每條解釋內容的唯一標識',
-    position_id         INT         NOT NULL COMMENT '外鍵，參照 CardPosition 表中的 position_id',
-    interpretation_type VARCHAR(20) NOT NULL COMMENT '解釋的類型（如現狀、對方想法、未來等）',
-    content             TEXT        NOT NULL COMMENT '詳細的解釋內容',
+    id   INT AUTO_INCREMENT PRIMARY KEY COMMENT '每條解釋內容的唯一標識',
+    position_id         INT         NOT NULL COMMENT '外鍵，參照 card_position 表的 id',
+    content             TEXT        NOT NULL COMMENT '詳細的解釋內容'
 ) COMMENT = '存儲塔羅牌的詳細解釋內容';
 
 
