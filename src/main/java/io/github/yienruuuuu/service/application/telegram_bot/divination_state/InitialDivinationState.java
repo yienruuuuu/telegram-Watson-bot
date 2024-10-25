@@ -8,8 +8,8 @@ import io.github.yienruuuuu.bean.enums.LanguageType;
 import io.github.yienruuuuu.bean.enums.TextType;
 import io.github.yienruuuuu.service.application.telegram_bot.DivinationBot;
 import io.github.yienruuuuu.service.application.telegram_bot.TelegramBotClient;
+import io.github.yienruuuuu.service.business.CardPositionService;
 import io.github.yienruuuuu.service.business.TextService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -33,9 +33,8 @@ import java.util.List;
 @Component
 public class InitialDivinationState extends DivinationBaseState implements DivinationBotState {
 
-    @Autowired
-    public InitialDivinationState(TelegramBotClient telegramBotClient, TextService textService) {
-        super(telegramBotClient, textService);
+    public InitialDivinationState(TelegramBotClient telegramBotClient, TextService textService, CardPositionService cardPositionService) {
+        super(telegramBotClient, textService, cardPositionService);
     }
 
     @Override

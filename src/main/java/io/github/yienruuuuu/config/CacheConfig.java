@@ -3,9 +3,12 @@ package io.github.yienruuuuu.config;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.yienruuuuu.bean.entity.Bot;
+import io.github.yienruuuuu.bean.entity.CardPosition;
+import io.github.yienruuuuu.bean.enums.TarotInterpretationType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,6 +28,11 @@ public class CacheConfig {
 
     @Bean
     public Cache<String, Bot> botCache(Caffeine<Object, Object> caffeine) {
+        return caffeine.build();
+    }
+
+    @Bean
+    public Cache<TarotInterpretationType, List<CardPosition>> cardCache(Caffeine<Object, Object> caffeine) {
         return caffeine.build();
     }
 }

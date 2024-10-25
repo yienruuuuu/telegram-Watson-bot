@@ -1,5 +1,6 @@
 package io.github.yienruuuuu.service.business.impl;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import io.github.yienruuuuu.bean.entity.CardPosition;
 import io.github.yienruuuuu.bean.enums.TarotInterpretationType;
 import io.github.yienruuuuu.repository.CardPositionRepository;
@@ -16,9 +17,11 @@ import java.util.List;
 @Service
 public class CardPositionServiceImpl implements CardPositionService {
     private final CardPositionRepository cardPositionRepository;
+    private final Cache<TarotInterpretationType, List<CardPosition>> cardCache;
 
-    public CardPositionServiceImpl(CardPositionRepository cardPositionRepository) {
+    public CardPositionServiceImpl(CardPositionRepository cardPositionRepository, Cache<TarotInterpretationType, List<CardPosition>> cardCache) {
         this.cardPositionRepository = cardPositionRepository;
+        this.cardCache = cardCache;
     }
 
     @Override
@@ -30,6 +33,17 @@ public class CardPositionServiceImpl implements CardPositionService {
     @Override
     @Transactional(readOnly = true)
     public List<CardPosition> findCardPositionsByInterpretationType(TarotInterpretationType interpretationType) {
-        return cardPositionRepository.findCardPositionsByInterpretationType(interpretationType);
+        // 先檢查緩存是否存在
+        List<CardPosition> cachedCardList = cardCache.getIfPresent(interpretationType);
+        if (cachedCardList != null) {
+            return cachedCardList;
+        }
+
+        // 若不存在則從資料庫查詢，並存入緩存
+        List<CardPosition> cardList = cardPositionRepository.findCardPositionsByInterpretationType(interpretationType);
+        if (cardList != null) {
+            cardCache.put(interpretationType, cardList);
+        }
+        return cardList;
     }
 }
