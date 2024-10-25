@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashMap;
@@ -27,12 +28,14 @@ public class DivinationBot implements LongPollingSingleThreadUpdateConsumer {
     private final BotService botService;
     private final Map<String, DivinationBotState> userStates = new HashMap<>();  // 存放每個使用者的狀態
     private final Map<String, LanguageType> userLanguages = new HashMap<>(); // 保存用戶語言設置
+    private final TelegramBotClient telegramBotClient;
 
 
     @Autowired
-    public DivinationBot(Map<DivinationBotStateEnum, DivinationBotState> stateMap, BotService botService) {
+    public DivinationBot(Map<DivinationBotStateEnum, DivinationBotState> stateMap, BotService botService, TelegramBotClient telegramBotClient) {
         this.stateMap = stateMap;
         this.botService = botService;
+        this.telegramBotClient = telegramBotClient;
     }
 
     /**
@@ -73,9 +76,11 @@ public class DivinationBot implements LongPollingSingleThreadUpdateConsumer {
             currentState.handleMessage(this, update, bot);
         } else if (update.hasCallbackQuery()) {
             currentState.handleCallbackQuery(this, update, bot);
+        } else if (update.hasPreCheckoutQuery()) {
+            AnswerPreCheckoutQuery answerPreCheckoutQuery = new AnswerPreCheckoutQuery(update.getPreCheckoutQuery().getId(), true);
+            telegramBotClient.send(answerPreCheckoutQuery, bot);
         }
     }
-
 
     private Optional<String> getChatId(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -83,6 +88,9 @@ public class DivinationBot implements LongPollingSingleThreadUpdateConsumer {
         }
         if (update.hasCallbackQuery()) {
             return Optional.of(update.getCallbackQuery().getMessage().getChatId().toString());
+        }
+        if (update.hasPreCheckoutQuery()) {
+            return Optional.of(update.getPreCheckoutQuery().getFrom().getId().toString());
         }
         return Optional.empty();
     }

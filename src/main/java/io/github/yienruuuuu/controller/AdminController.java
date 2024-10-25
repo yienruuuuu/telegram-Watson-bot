@@ -13,11 +13,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice;
+import org.telegram.telegrambots.meta.api.methods.payments.RefundStarPayment;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
+import org.telegram.telegrambots.meta.api.methods.send.SendPaidMedia;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.media.paid.InputPaidMediaPhoto;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
+import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
@@ -110,6 +115,51 @@ public class AdminController {
                 .build();
 
         Message mss = telegramBotClient.send(msg, botService.findBotById(botId));
+        JsonUtils.parseJsonAndPrintLog("收到響應", mss);
+    }
+
+    @Schema(description = "測試傳送付費photo")
+    @GetMapping(value = "bots/sendPaymentPhoto/{fileId}/{botId}")
+    public void sendPaymentPhoto(@PathVariable("fileId") String fileId, @PathVariable("botId") int botId) {
+        SendPaidMedia msg = SendPaidMedia
+                .builder()
+                .chatId("1513052214")
+                .media(List.of(new InputPaidMediaPhoto(fileId), new InputPaidMediaPhoto(fileId)))
+                .caption("請選擇您的每日幸運卡牌(可能含有色情圖片，請確認是否已滿18歲)")
+                .starCount(1)
+                .build();
+
+        List<Message> mss = telegramBotClient.send(msg, botService.findBotById(botId));
+        JsonUtils.parseJsonAndPrintLog("收到響應", mss);
+    }
+
+    @Schema(description = "測試傳送付費stars邀請")
+    @GetMapping(value = "bots/sendPayStarsAsking/{botId}")
+    public void sendStarsAsking(@PathVariable("botId") int botId) {
+        SendInvoice sendInvoice = SendInvoice.builder()
+                .chatId("1513052214")
+                .title("購買數位商品")
+                .description("用Telegram Stars支付以解鎖內容")
+                .payload("唯一的識別ID")
+                .currency("XTR")
+                .price(new LabeledPrice("價格", 1))
+                .providerToken("").build();
+
+
+        Message mss = telegramBotClient.send(sendInvoice, botService.findBotById(botId));
+        JsonUtils.parseJsonAndPrintLog("收到響應", mss);
+    }
+
+    @Schema(description = "測試傳送退款stars")
+    @GetMapping(value = "bots/sendRefundStars/{botId}/{telegramPaymentChargeId}")
+    public void sendRefundStars(@PathVariable("botId") int botId, @PathVariable("telegramPaymentChargeId") String chargeId) {
+        RefundStarPayment msg = RefundStarPayment
+                .builder()
+                .telegramPaymentChargeId(chargeId)
+                .userId(1513052214L)
+                .build();
+
+        Boolean mss = telegramBotClient.send(msg, botService.findBotById(botId));
         JsonUtils.parseJsonAndPrintLog("收到響應", mss);
     }
 

@@ -8,6 +8,7 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
+import org.telegram.telegrambots.meta.api.methods.send.SendPaidMedia;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
@@ -15,6 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -93,6 +95,20 @@ public class TelegramBotClient {
             return telegramClient.downloadFile(file);
         } catch (TelegramApiException e) {
             handleException(e, "getFile");
+            return null;
+        }
+    }
+
+
+    /**
+     * 付費圖片傳送
+     */
+    public List<Message> send(SendPaidMedia sendPaidMedia, Bot bot) {
+        TelegramClient telegramClient = getOrCreateTelegramClient(bot);
+        try {
+            return telegramClient.execute(sendPaidMedia);
+        } catch (TelegramApiException e) {
+            handleException(e, "send paid media");
             return null;
         }
     }
