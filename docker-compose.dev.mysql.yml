@@ -13,7 +13,6 @@ services:
       - "3307:3306"                  # 將 MySQL 的埠對映到主機
     volumes:
       - ./database/cnf:/etc/mysql/conf.d/  # 掛載自訂的 my.cnf 設定文件
-      - ./database/mysql-init-scripts:/docker-entrypoint-initdb.d/  # 自動執行的 SQL 腳本
     networks:
       - dev-network
     command: ["/bin/bash", "-c", "chmod 644 /etc/mysql/conf.d/my.cnf && docker-entrypoint.sh mysqld"]  # 改變權限並啟動 MySQL
