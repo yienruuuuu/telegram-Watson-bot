@@ -1,20 +1,21 @@
 version: '3.8'
 
 services:
-  web:
-    image: tg_bot:latest
-    container_name: tg_bot
+  tg_bot_app:
+    image: openjdk:17-jdk
+    container_name: tg_bot_app
     restart: always
     environment:
-      DATABASE_HOST: mysql
-      DATABASE_NAME: tg_bot
-      DATABASE_USER: root
-      DATABASE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      - SPRING_PROFILES_ACTIVE=prod
+      - TZ=UTC  # 設置容器時區為 UTC
+    volumes:
+      - ./github/build/libs/tg_bot.jar:/app/tg_bot.jar
+    command: ['sh', '-c', 'java -jar -Dspring.profiles.active=prod -Duser.timezone=UTC /app/tg_bot.jar']
     ports:
-      - "80:80"
+      - "8080:8080"
     networks:
       - prod-network
 
 networks:
   prod-network:
-    external: true
+    driver: bridge
