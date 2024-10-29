@@ -5,6 +5,8 @@ import io.github.yienruuuuu.bean.enums.PicType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 
 @Getter
 @Setter
@@ -31,10 +33,12 @@ public class Pic extends BaseEntity {
 
     @NotNull
     @Column(name = "telegram_file_id", nullable = false)
+    @Schema(description = "主BOT所存的fieldId")
     private String telegramFileId;
 
     @NotNull
     @Column(name = "file_bot_file_id", nullable = false)
+    @Schema(description = "資源管理BOT所存的fieldId")
     private String fileBotFileId;
 
     @Column(name = "description")

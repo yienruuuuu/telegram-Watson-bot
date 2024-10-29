@@ -99,6 +99,19 @@ public class TelegramBotClient {
         }
     }
 
+    /**
+     * 下載文件的通用方法
+     */
+    public java.io.File downloadFileByFilePath(String filePath, Bot bot) {
+        TelegramClient telegramClient = getOrCreateTelegramClient(bot);
+        try {
+            return telegramClient.downloadFile(filePath);
+        } catch (TelegramApiException e) {
+            handleException(e, "downloadFileByFilePath");
+            return null;
+        }
+    }
+
 
     /**
      * 付費圖片傳送

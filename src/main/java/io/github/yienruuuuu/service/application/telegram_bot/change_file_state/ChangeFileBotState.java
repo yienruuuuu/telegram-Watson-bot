@@ -4,6 +4,8 @@ import io.github.yienruuuuu.bean.entity.Bot;
 import io.github.yienruuuuu.service.application.telegram_bot.ChangeFileBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.io.IOException;
+
 /**
  * @author Eric.Lee
  * Date: 2024/10/21

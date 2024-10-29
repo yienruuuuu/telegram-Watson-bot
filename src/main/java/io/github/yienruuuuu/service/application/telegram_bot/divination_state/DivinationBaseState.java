@@ -83,7 +83,7 @@ public class DivinationBaseState {
      * 從指定的語言類型+文字內容類型中，隨機選擇一個Text並返回其內容(語言為null的話，預設為英語)
      */
     protected Text randomTextInDefaultLanguage(LanguageType languageType, TextType textType) {
-        List<Text> textList = textService.findTextByLanguageTypeAndTextType(languageType == null ? LanguageType.EN : languageType, textType);
+        List<Text> textList = textService.findTextByLanguageTypeAndTextType(languageType == null ? LanguageType.ZH_TW : languageType, textType);
         if (textList.isEmpty()) {
             log.warn("textList in languageType: {} ,TextType: {} not exist", languageType, textType);
             return null;
