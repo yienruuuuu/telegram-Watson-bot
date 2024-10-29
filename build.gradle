@@ -47,3 +47,11 @@ test {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
+jar {
+    archiveFileName = 'tg_bot.jar'
+}
+
+bootJar {
+    archiveFileName = 'tg_bot.jar'  // 自定義 Spring Boot 可執行 JAR 的名稱
+}
