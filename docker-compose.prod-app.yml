@@ -9,7 +9,7 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - TZ=UTC  # 設置容器時區為 UTC
     volumes:
-      - ./github/build/libs/tg_bot.jar:/app/tg_bot.jar
+      - ./tg_bot.jar:/app/tg_bot.jar  # 修改為 Docker Compose 層的 jar 路徑
     command: ['sh', '-c', 'java -jar -Dspring.profiles.active=prod -Duser.timezone=UTC /app/tg_bot.jar']
     ports:
       - "8080:8080"
