@@ -13,11 +13,10 @@ import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.File;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
+
+import java.util.Comparator;
 
 /**
  * 初始狀態
@@ -60,7 +59,10 @@ public class UploadPicState extends ChangeFileBaseState implements ChangeFileBot
             return;
         }
         //使用主BOT上傳文件並取得fileId
-        String fileId = update.getMessage().getPhoto().get(1).getFileId();
+        String fileId = update.getMessage().getPhoto().stream()
+                .max(Comparator.comparingInt(PhotoSize::getFileSize))
+                .orElseThrow(() -> new IllegalArgumentException("沒有照片"))
+                .getFileId();
         File file = telegramBotClient.getFile(new GetFile(fileId), botEntity);
         java.io.File downloadedFile = telegramBotClient.downloadFile(file, botEntity);
         Message resMessage = telegramBotClient.send(new SendPhoto("1513052214", new InputFile(downloadedFile)), mainBotEntity);
