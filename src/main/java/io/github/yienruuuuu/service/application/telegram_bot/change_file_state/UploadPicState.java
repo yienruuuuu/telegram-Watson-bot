@@ -66,11 +66,15 @@ public class UploadPicState extends ChangeFileBaseState implements ChangeFileBot
         File file = telegramBotClient.getFile(new GetFile(fileId), botEntity);
         java.io.File downloadedFile = telegramBotClient.downloadFile(file, botEntity);
         Message resMessage = telegramBotClient.send(new SendPhoto("1513052214", new InputFile(downloadedFile)), mainBotEntity);
+        String resFileId = resMessage.getPhoto().stream()
+                .max(Comparator.comparingInt(PhotoSize::getFileSize))
+                .orElseThrow(() -> new IllegalArgumentException("沒有照片"))
+                .getFileId();
         telegramBotClient.send(new DeleteMessage("1513052214", resMessage.getMessageId()), mainBotEntity);
 
         Pic newPic = Pic.builder()
                 .type(picType)
-                .telegramFileId(resMessage.getPhoto().get(0).getFileId())
+                .telegramFileId(resFileId)
                 .fileBotFileId(fileId)
                 .bot(mainBotEntity)
                 .build();
